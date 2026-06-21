@@ -126,23 +126,39 @@
       <div class="panel">
         <h2>Send Us A Message</h2>
         <p class="lead">Fill out the form below and we'll get back to you as soon as possible.</p>
-        <form onsubmit="return false;">
+
+        <!--
+          HOW THIS FORM SENDS EMAIL
+          This is a static site with no server, so it uses Formspree (a free
+          form-to-email service) to deliver submissions to your inbox.
+
+          ONE-TIME SETUP (takes ~2 minutes):
+          1. Go to https://formspree.io and sign up free with the email
+             address you want enquiries sent to (e.g. securelink.tech@outlook.com).
+          2. Create a new form, copy the endpoint it gives you
+             (looks like: https://formspree.io/f/abcd1234).
+          3. Replace YOUR_FORM_ID below in the form's "action" attribute
+             with that ID.
+          Until step 3 is done, the form will show an error if submitted —
+          the "Email us directly" button below always works with no setup.
+        -->
+        <form id="enquiry-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
           <div class="form-grid">
             <div class="form-field">
               <label for="fullname">Full Name *</label>
-              <input id="fullname" type="text" placeholder="Your full name" required>
+              <input id="fullname" name="full_name" type="text" placeholder="Your full name" required>
             </div>
             <div class="form-field">
               <label for="phone">Phone Number *</label>
-              <input id="phone" type="tel" placeholder="Your phone number" required>
+              <input id="phone" name="phone" type="tel" placeholder="Your phone number" required>
             </div>
             <div class="form-field">
               <label for="email">Email Address *</label>
-              <input id="email" type="email" placeholder="Your email address" required>
+              <input id="email" name="email" type="email" placeholder="Your email address" required>
             </div>
             <div class="form-field">
               <label for="prefcontact">Preferred Contact Method</label>
-              <select id="prefcontact">
+              <select id="prefcontact" name="preferred_contact_method">
                 <option>Phone</option>
                 <option>Email</option>
                 <option>Either</option>
@@ -150,7 +166,7 @@
             </div>
             <div class="form-field full">
               <label for="service">Service Interested In *</label>
-              <select id="service" required>
+              <select id="service" name="service_interested_in" required>
                 <option value="" selected disabled>Select a service</option>
                 <option>Security Cameras</option>
                 <option>Smart Locks</option>
@@ -163,7 +179,7 @@
             </div>
             <div class="form-field full">
               <label for="proptype">Property Type</label>
-              <select id="proptype">
+              <select id="proptype" name="property_type">
                 <option value="" selected disabled>Select property type</option>
                 <option>Residential Home</option>
                 <option>Apartment / Unit</option>
@@ -173,22 +189,29 @@
             </div>
             <div class="form-field full">
               <label for="message">Your Message *</label>
-              <textarea id="message" placeholder="Tell us about your needs..." required></textarea>
+              <textarea id="message" name="message" placeholder="Tell us about your needs..." required></textarea>
             </div>
           </div>
           <label class="form-check">
             <input type="checkbox" required>
             I agree to be contacted regarding my enquiry.
           </label>
-          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
-            Send Message
+          <button type="submit" id="enquiry-submit-btn" class="btn btn-primary" style="width:100%; justify-content:center;">
+            <span class="btn-label">Send Message</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </button>
+          <div id="enquiry-status" role="status" aria-live="polite" style="display:none; margin-top:14px; padding:12px 14px; border-radius:8px; font-size:.85rem;"></div>
           <div class="form-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             Your information is safe with us. We respect your privacy.
           </div>
+          <div style="text-align:center; margin-top:14px;">
+            <a href="mailto:securelink.tech@outlook.com?subject=Website%20Enquiry" style="font-size:.82rem; color:var(--blue); font-weight:700;">
+              Or email us directly at securelink.tech@outlook.com →
+            </a>
+          </div>
         </form>
+
       </div>
 
     </div>
@@ -358,6 +381,70 @@
     </div>
   </div>
 </footer>
+
+<script>
+(function () {
+  var form = document.getElementById('enquiry-form');
+  var statusBox = document.getElementById('enquiry-status');
+  var submitBtn = document.getElementById('enquiry-submit-btn');
+  var btnLabel = submitBtn.querySelector('.btn-label');
+
+  function showStatus(message, kind) {
+    statusBox.style.display = 'block';
+    statusBox.textContent = message;
+    if (kind === 'success') {
+      statusBox.style.background = '#eafaf0';
+      statusBox.style.color = '#16653f';
+      statusBox.style.border = '1px solid #bdeccd';
+    } else {
+      statusBox.style.background = '#fdf2f2';
+      statusBox.style.color = '#9b1c1c';
+      statusBox.style.border = '1px solid #f6c4c4';
+    }
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    if (form.action.indexOf('YOUR_FORM_ID') !== -1) {
+      showStatus(
+        "This form isn't connected to an email service yet. Please use the \u201cEmail us directly\u201d button below, or call 0480 390 795.",
+        'error'
+      );
+      return;
+    }
+
+    submitBtn.disabled = true;
+    btnLabel.textContent = 'Sending…';
+
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    })
+      .then(function (response) {
+        if (response.ok) {
+          showStatus("Thanks — your message has been sent. We'll get back to you within 24 hours.", 'success');
+          form.reset();
+        } else {
+          return response.json().then(function (data) {
+            var msg = (data && data.errors && data.errors.length)
+              ? data.errors.map(function (er) { return er.message; }).join(', ')
+              : 'Something went wrong sending your message.';
+            showStatus(msg + ' Please try again or call us on 0480 390 795.', 'error');
+          });
+        }
+      })
+      .catch(function () {
+        showStatus('Something went wrong sending your message. Please try again or call us on 0480 390 795.', 'error');
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        btnLabel.textContent = 'Send Message';
+      });
+  });
+})();
+</script>
 
 </body>
 </html>

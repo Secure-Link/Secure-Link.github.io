@@ -193,10 +193,11 @@
   .sol-card{
     border:1px solid var(--line);
     border-radius:var(--radius);
-    overflow:hidden;
+    overflow:visible;
     background:#fff;
     transition:box-shadow .2s ease, transform .2s ease;
     display:flex; flex-direction:column;
+    position:relative;
   }
   .sol-card:hover{box-shadow:0 18px 40px -22px rgba(10,30,66,.25); transform:translateY(-3px);}
   .sol-thumb{
@@ -204,16 +205,21 @@
     background:linear-gradient(135deg,var(--c1,#dbe6fb),var(--c2,#aec3f2));
     position:relative;
     display:flex;align-items:center;justify-content:center;
+    border-radius:var(--radius) var(--radius) 0 0;
+    overflow:hidden;
   }
   .sol-thumb svg{width:64px;height:64px;color:rgba(10,30,66,.55);}
-  .sol-body{padding:22px 22px 24px; flex:1; display:flex; flex-direction:column;}
+  .sol-body{padding:22px 22px 24px; flex:1; display:flex; flex-direction:column; border-radius:0 0 var(--radius) var(--radius); overflow:hidden;}
   .sol-icon{
     width:46px;height:46px;border-radius:50%;
     background:var(--blue);
     display:flex;align-items:center;justify-content:center;
-    margin-top:-44px; margin-bottom:14px;
     border:4px solid #fff;
     flex-shrink:0;
+    position:absolute;
+    top:148px; left:22px;
+    box-shadow:0 4px 10px -2px rgba(10,30,66,.3);
+    z-index:2;
   }
   .sol-icon svg{width:20px;height:20px;color:#fff;}
   .sol-body h3{font-size:1.12rem; margin-bottom:3px;}
@@ -282,26 +288,31 @@
   .proj-card{
     border:1px solid var(--line);
     border-radius:var(--radius);
-    overflow:hidden;
+    overflow:visible;
     background:#fff;
+    position:relative;
   }
   .proj-thumb{
     height:190px;
     background:linear-gradient(135deg,var(--p1,#0a1e42),var(--p2,#2563eb));
     position:relative;
+    border-radius:var(--radius) var(--radius) 0 0;
+    overflow:hidden;
   }
   .proj-badges{
-    position:absolute; bottom:-22px; left:20px;
+    position:absolute; top:170px; left:20px;
     display:flex; gap:8px;
+    z-index:2;
   }
   .proj-badge{
     width:40px;height:40px;border-radius:50%;
     background:var(--blue);
     border:3px solid #fff;
     display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 10px -2px rgba(10,30,66,.3);
   }
   .proj-badge svg{width:17px;height:17px;color:#fff;}
-  .proj-body{padding:34px 22px 24px;}
+  .proj-body{padding:34px 22px 24px; border-radius:0 0 var(--radius) var(--radius); overflow:hidden;}
   .proj-body h3{font-size:1.08rem; margin-bottom:3px;}
   .proj-tag{color:var(--blue); font-weight:700; font-size:.82rem; margin-bottom:10px;}
   .proj-body p{color:var(--muted); font-size:.87rem; margin-bottom:18px;}
@@ -528,20 +539,24 @@
 
   /* ABOUT: story cards */
   .story-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
-  .story-card{border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:#fff;}
+  .story-card{border:1px solid var(--line); border-radius:var(--radius); overflow:visible; background:#fff; position:relative;}
   .story-thumb{
     height:170px; position:relative;
     background:linear-gradient(135deg,var(--s1,#1c1c1c),var(--s2,#3a3a3a));
     display:flex;align-items:center;justify-content:center;
+    border-radius:var(--radius) var(--radius) 0 0;
+    overflow:hidden;
   }
   .story-thumb svg{width:38%; color:rgba(255,255,255,.85);}
   .story-icon{
     width:44px;height:44px;border-radius:50%; background:var(--blue);
     display:flex;align-items:center;justify-content:center;
-    position:absolute; bottom:-22px; left:22px; border:4px solid #fff;
+    position:absolute; top:148px; left:22px; border:4px solid #fff;
+    z-index:2;
+    box-shadow:0 4px 10px -2px rgba(10,30,66,.3);
   }
   .story-icon svg{width:19px;height:19px; color:#fff;}
-  .story-body{padding:34px 22px 24px;}
+  .story-body{padding:34px 22px 24px; border-radius:0 0 var(--radius) var(--radius); overflow:hidden;}
   .story-body h3{font-size:1.05rem; margin-bottom:8px;}
   .story-body p{font-size:.87rem; color:var(--muted);}
 
